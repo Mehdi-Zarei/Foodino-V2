@@ -10,7 +10,7 @@ export function TypeOrmConfig(): TypeOrmModuleOptions {
     port: parseInt(DB_PORT!, 10),
     username: DB_USERNAME,
     password: DB_PASSWORD,
-    synchronize: true,
+    synchronize: false,
     autoLoadEntities: true,
     entities: [__dirname + "/../**/*.entity.{ts,js}"],
   };
