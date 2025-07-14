@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
-import { SendOtpDto, VerifyOtpDto } from "./dto/create-auth.dto";
+import { RegisterDto, SendOtpDto, VerifyOtpDto } from "./dto/create-auth.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { UserEntity } from "src/user/entities/user.entity";
 import { Repository } from "typeorm";
@@ -82,5 +82,75 @@ export class AuthService {
         message: "کاربر حسابی ندارد. به صفحه ثبت‌نام منتقل شود.",
       };
     }
+  }
+
+  async register(registerDto: RegisterDto) {
+    const { name, phone, email } = registerDto;
+
+    const isUserExist = await this.userRepository.findOne({ where: [{ phone }, { email }] });
+    if (isUserExist) {
+      if (isUserExist.phone === phone) {
+        throw new UnauthorizedException("این شماره موبایل تکراری می باشد.");
+      }
+
+      if (isUserExist.email === email) {
+        throw new UnauthorizedException("این آدرس ایمیل تکراری می باشد.");
+      }
+    }
+
+    const isFirstUser = (await this.userRepository.count()) === 0;
+
+    const newUser = this.userRepository.create({
+      name,
+      phone,
+      email,
+      isRestrict: false,
+      role: isFirstUser ? "ADMIN" : "USER",
+    });
+    await this.userRepository.save(newUser);
+
+    const accessToken = this.tokenService.createAccessToken({ id: newUser.id, role: newUser.role });
+
+    const refreshToken = this.tokenService.createRefreshToken({ id: newUser.id, role: newUser.role });
+
+    const hashedRefreshToken = await this.hashService.hashData(refreshToken);
+    await this.redisService.setKey(`refreshToken:${newUser.id}`, hashedRefreshToken, 2592000);
+
+    return {
+      message: "حساب کاربری با موفقیت ساخته شد.",
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async refreshToken(token: string) {
+    const payload = await this.tokenService.verifyToken(token, process.env.REFRESH_TOKEN_SECRET);
+
+    if (!payload) {
+      throw new UnauthorizedException("لطفا وارد حساب کاربری خود شوید.");
+    }
+
+    const storedHashedToken = await this.redisService.getKey(`refreshToken:${payload.id}`);
+    if (!storedHashedToken) {
+      throw new UnauthorizedException("لطفا وارد حساب کاربری خود شوید.");
+    }
+
+    const compareToken = await this.hashService.compareData(token, storedHashedToken);
+    if (!compareToken) {
+      throw new UnauthorizedException("لطفا وارد حساب کاربری خود شوید.");
+    }
+
+    const newAccessToken = this.tokenService.createAccessToken({ id: payload.id, role: payload.role });
+
+    return { newAccessToken };
+  }
+
+  async logout(userId: number) {
+    const remove = await this.redisService.removeKey(`refreshToken:${userId}`);
+    if (!remove) {
+      throw new UnauthorizedException("شما وارد حساب کاربری خود نیستید!");
+    }
+
+    return { message: "با موفقیت از حساب کاربری خود خارج شدید." };
   }
 }

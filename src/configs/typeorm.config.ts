@@ -1,3 +1,4 @@
+import { Sse } from "@nestjs/common";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 export function TypeOrmConfig(): TypeOrmModuleOptions {

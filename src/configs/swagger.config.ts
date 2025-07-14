@@ -3,7 +3,7 @@ import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 
 export function swaggerConfigInit(app: INestApplication) {
   const document = new DocumentBuilder()
-    .setVersion("1.0.0")
+    .setVersion("2.0.0")
     .setTitle("A Foodino website's Back-End - V2 ")
     .setDescription("This is the backend API for a ...")
     .addBearerAuth(

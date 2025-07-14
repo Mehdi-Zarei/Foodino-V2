@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { userAddressEntity } from "./address.entity";
+import { UserAddressEntity } from "./address.entity";
 
 @Entity("user")
 export class UserEntity {
@@ -13,7 +13,7 @@ export class UserEntity {
   phone: string;
 
   @Column({ unique: true, nullable: true })
-  email: string;
+  email?: string;
 
   @Column({ type: "enum", enum: ["ADMIN", "USER"], default: "USER" })
   role: string;
@@ -22,13 +22,13 @@ export class UserEntity {
   isRestrict: boolean;
 
   @Column({ unique: true, nullable: true })
-  inviteCode: string;
+  inviteCode?: string;
 
   @Column({ nullable: true })
-  referrerId: string;
+  referrerId?: string;
 
-  @OneToMany(() => userAddressEntity, (address) => address.user)
-  addresses: userAddressEntity;
+  @OneToMany(() => UserAddressEntity, (address) => address.user)
+  addresses: UserAddressEntity;
 
   @CreateDateColumn()
   createdAt: Date;

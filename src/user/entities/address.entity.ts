@@ -1,15 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserEntity } from "./user.entity";
 
 @Entity("userAddress")
-export class userAddressEntity {
+export class UserAddressEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

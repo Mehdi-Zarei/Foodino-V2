@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
-import { Repository } from "typeorm";
+import { IsNull, Repository } from "typeorm";
 import { CategoryEntity } from "./entities/category.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { S3Service } from "src/s3/s3.service";
@@ -51,12 +51,11 @@ export class CategoryService {
 
   async findAll() {
     const categories = await this.categoryRepository.find({
-      where: {},
+      where: { parent: IsNull() },
       relations: {
-        parent: true,
-      },
-      select: {
-        parent: { title: true },
+        children: {
+          menuItems: true,
+        },
       },
     });
     if (!categories.length) {
@@ -70,10 +69,7 @@ export class CategoryService {
     const category = await this.categoryRepository.findOne({
       where: { slug },
       relations: {
-        parent: true,
-      },
-      select: {
-        parent: { title: true },
+        children: true,
       },
     });
     if (!category) {
