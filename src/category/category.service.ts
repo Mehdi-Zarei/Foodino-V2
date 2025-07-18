@@ -107,7 +107,7 @@ export class CategoryService {
       console.log("image");
       await this.s3Service.deleteFile(isCategoryExist.image);
 
-      const newImage = await this.s3Service.uploadFile(image, "category-image");
+      const newImage = await this.s3Service.uploadFile(image, "category-images");
       isCategoryExist.image = newImage.Location;
     }
 

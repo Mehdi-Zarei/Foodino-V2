@@ -22,7 +22,7 @@ export class CustomAuthGuard implements CanActivate {
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      throw new UnauthorizedException("توکن ارسال نشده است.");
+      throw new UnauthorizedException("لطفا وارد حساب کاربری خود شوید.");
     }
 
     let decoded: any;

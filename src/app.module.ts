@@ -7,9 +7,10 @@ import { AuthModule } from "./auth/auth.module";
 import { RedisModule } from "./redis/redis.module";
 import { JwtModule } from "@nestjs/jwt";
 import { MenuItemModule } from './menu-item/menu-item.module';
+import { CartModule } from './cart/cart.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(TypeOrmConfig()), UserModule, CategoryModule, AuthModule, RedisModule, JwtModule, MenuItemModule],
+  imports: [TypeOrmModule.forRoot(TypeOrmConfig()), UserModule, CategoryModule, AuthModule, RedisModule, JwtModule, MenuItemModule, CartModule],
   controllers: [],
   providers: [],
   exports: [JwtModule],

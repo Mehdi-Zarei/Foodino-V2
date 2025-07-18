@@ -1,5 +1,6 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { UserAddressEntity } from "./address.entity";
+import { CartEntity } from "src/cart/entities/cart.entity";
 
 @Entity("user")
 export class UserEntity {
@@ -29,6 +30,9 @@ export class UserEntity {
 
   @OneToMany(() => UserAddressEntity, (address) => address.user)
   addresses: UserAddressEntity;
+
+  @OneToOne(() => CartEntity, (cart) => cart.user)
+  cart: CartEntity;
 
   @CreateDateColumn()
   createdAt: Date;

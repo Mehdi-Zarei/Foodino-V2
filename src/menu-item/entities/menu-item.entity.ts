@@ -1,7 +1,8 @@
+import { CartItemEntity } from "src/cart/entities/cart-items.entity";
 import { CategoryEntity } from "src/category/entities/category.entity";
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-@Entity("menuItem")
+@Entity("menu_item")
 export class MenuItemEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -26,6 +27,9 @@ export class MenuItemEntity {
     nullable: true,
   })
   subCategory: CategoryEntity;
+
+  @OneToMany(() => CartItemEntity, (item) => item.product)
+  cartItems: CartItemEntity[];
 
   @CreateDateColumn()
   createdAt: Date;
